@@ -14,7 +14,7 @@ struct HomeView: View {
         TabView(selection: $selection) {
             ListView()
                 .tabItem {
-                    Label("Tasks", systemImage: "list.clipboard")
+                    Label("Calculate", systemImage: "percent")
                 }
                 .tag(1)
             SettingsView()
@@ -23,7 +23,7 @@ struct HomeView: View {
                 }
                 .tag(2)
         }
-        .navigationTitle(selection == 1 ? "Goals" : "Settings")
+        .navigationTitle(selection == 1 ? "Output" : "Settings")
         .navigationBarTitleDisplayMode(.inline)// << here !!
         
     }

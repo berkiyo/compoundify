@@ -17,26 +17,20 @@ struct ListView: View {
         
         
         ZStack {
-            if listViewModel.items.isEmpty { // if there are no items, run this code.
-                NoItemsView()
-                    .transition(AnyTransition.opacity.animation(.easeIn))
-                    .environmentObject(listViewModel)
-            } else {
-                List {
-                    ForEach(listViewModel.items) {
-                        item in ListRowView(item: item)
-                            .onTapGesture {
-                                withAnimation(.linear) {
-                                    listViewModel.updateItem(item: item)
-                                }
+            List {
+                ForEach(listViewModel.items) {
+                    item in ListRowView(item: item)
+                        .onTapGesture {
+                            withAnimation(.linear) {
+                                listViewModel.updateItem(item: item)
                             }
-                    }
-                    .onDelete(perform: listViewModel.deleteItem) // all from "ListViewModel.swift"
-                    .onMove(perform: listViewModel.moveItem)
+                        }
                 }
+                .onDelete(perform: listViewModel.deleteItem) // all from "ListViewModel.swift"
+                .onMove(perform: listViewModel.moveItem)
             }
         }
-        .navigationTitle("Infinity")
+        .navigationTitle("Compoundify")
         .navigationBarItems(
             leading:
                 EditButton(),

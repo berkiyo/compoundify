@@ -10,7 +10,7 @@ struct SettingsView: View {
                     List {
                         // About View
                         NavigationLink { AboutView() } label: {
-                            Text("🧐 About Todoify")
+                            Text("🧐 About Compoundify")
                         }
                         // Feedback Hyperlink (Email)
                         Link("✉️ Give Feedback", destination: URL(string: "mailto:mail@tekbyte.net")!)
