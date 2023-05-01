@@ -7,15 +7,13 @@
 import SwiftUI
 
 @main
-struct TodoifyApp: App {
-    @StateObject var listViewModel: ListViewModel = ListViewModel()
+struct CompoundifyApp: App {
     
     // the body
     var body: some Scene {
         WindowGroup {
             NavigationView {
                 HomeView()
-                    .environmentObject(listViewModel)
             }
             .navigationViewStyle(StackNavigationViewStyle())
         }

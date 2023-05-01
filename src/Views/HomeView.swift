@@ -7,12 +7,11 @@ import SwiftUI
 struct HomeView: View {
     
     @State var selection = 1 // by default, go with
-    @State var infinityPremium = false // this determines if the user is premium or not
     
     var body: some View {
         
         TabView(selection: $selection) {
-            ListView()
+            CompoundView()
                 .tabItem {
                     Label("Calculate", systemImage: "percent")
                 }
@@ -23,7 +22,7 @@ struct HomeView: View {
                 }
                 .tag(2)
         }
-        .navigationTitle(selection == 1 ? "Output" : "Settings")
+        .navigationTitle(selection == 1 ? "Compoundify" : "Settings")
         .navigationBarTitleDisplayMode(.inline)// << here !!
         
     }
