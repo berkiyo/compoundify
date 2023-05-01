@@ -43,33 +43,37 @@ struct CompoundView: View {
     var body: some View {
         ZStack {
             VStack {
+                
                 TextField("Enter principle (e.g. 10000)", text: $principleValue)
                     .padding(.horizontal)
                     .frame(height: 55)
                     .background(Color(UIColor.secondarySystemBackground))
                     .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                    .padding(.vertical)
+                    .padding(.vertical, 5)
                 
                 TextField("Enter interest (e.g. 7.99)", text: $interestValue)
                     .padding(.horizontal)
                     .frame(height: 55)
                     .background(Color(UIColor.secondarySystemBackground))
                     .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                    .padding(.vertical)
+                    .padding(.vertical, 5)
                 
                 TextField("Enter time period (e.g. 7)", text: $timeValue)
                     .padding(.horizontal)
                     .frame(height: 55)
                     .background(Color(UIColor.secondarySystemBackground))
                     .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                    .padding(.vertical)
-                
+                    .padding(.vertical, 5)
+                Spacer()
                 Divider()
                     .padding(20)
                 
                 Text("Graph Goes Here")
                     .padding()
                 
+                Divider()
+                    .padding(20)
+                Spacer()
                 Button(action: calculatePressed, label: {
                     Text("Calculate".uppercased())
                         .foregroundColor(.white)
@@ -79,16 +83,20 @@ struct CompoundView: View {
                         .background(Color.green)
                         .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                         .shadow(radius: 10)
-                })
-            }   
+                }) // END BUTTON
+            } // END VSTACK   
+            .padding(.vertical, 10)
+            .padding(.horizontal, 20)
             
             
             
-        }
+        } // END ZSTACK
         .navigationTitle("Compoundify")
+        
     }
     
     func calculatePressed() {
         // do something
+        print("Calculate Pressed!")
     }
 }
