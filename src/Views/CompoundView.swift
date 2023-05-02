@@ -26,29 +26,19 @@ print("Compound interest is-", CI)
 // CompoundView
 struct CompoundView: View {
     
-    struct StepCount: Identifiable {
+    struct CompoundCount: Identifiable {
         let id = UUID()
-        let weekday: Date
-        let steps: Int
-        
-        init(day: String, steps: Int) {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyyMMdd"
-            
-            self.weekday = formatter.date(from: day) ?? Date.distantPast
-            self.steps = steps
-        }
+        let time: Int
+        let interest: Int
     }
     
     
-    let currentWeek: [StepCount] = [
-        StepCount(day: "20220717", steps: 4200),
-        StepCount(day: "20220718", steps: 15000),
-        StepCount(day: "20220719", steps: 2800),
-        StepCount(day: "20220720", steps: 10800),
-        StepCount(day: "20220721", steps: 5300),
-        StepCount(day: "20220722", steps: 10400),
-        StepCount(day: "20220723", steps: 4000)
+    let currentInterest: [CompoundCount] = [
+        CompoundCount(time: 1, interest: 1000),
+        CompoundCount(time: 2, interest: 3000),
+        CompoundCount(time: 3, interest: 2000),
+        CompoundCount(time: 4, interest: 4500),
+        CompoundCount(time: 5, interest: 5000)
     ]
 
     
@@ -108,22 +98,15 @@ struct CompoundView: View {
                     
                     GroupBox ("Compound Interest") {
                         Chart {
-                            ForEach(currentWeek) {
+                            ForEach(currentInterest) {
                                 LineMark(
-                                    x: .value("Week Day", $0.weekday, unit: .day),
-                                    y: .value("Step Count", $0.steps)
+                                    x: .value("Time", $0.time),
+                                    y: .value("Interest", $0.interest)
                                 )
                             }
-                        }
-                    }
-                    
-                    GroupBox ( "Dummy Chart") {
-                        Chart(currentWeek) {
-                            LineMark(
-                                x: .value("Week Day", $0.weekday, unit: .day),
-                                y: .value("Step Count", $0.steps)
-                            )
-                            
+                        } // END CHART
+                        .onTapGesture {
+                            print("Chart tapped! Do something.") // TODO
                         }
                     }
                     
@@ -144,7 +127,7 @@ struct CompoundView: View {
                 } // END VSTACK   
                 .padding(.vertical, 10)
                 .padding(.horizontal, 20)
-            }
+            } // END SCROLLVIEW
             
             
             
