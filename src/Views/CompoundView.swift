@@ -26,28 +26,10 @@ print("Compound interest is-", CI)
 // CompoundView
 struct CompoundView: View {
     
-    struct CompoundCount: Identifiable {
-        let id = UUID()
-        let time: Int
-        let interest: Int
-    }
-    
-    
-    let currentInterest: [CompoundCount] = [
-        CompoundCount(time: 0, interest: 100),
-        CompoundCount(time: 2, interest: 3000),
-        CompoundCount(time: 3, interest: 2000),
-        CompoundCount(time: 4, interest: 4500),
-        CompoundCount(time: 5, interest: 9000)
-    ]
-
-    
     // Define Variables Here
     @State private var principleValue: String = ""    // The amount you want to borrow
     @State private var interestValue: String = ""     // The interest rate
-    @State private var timeValue: String = ""              // Time value (days?)
-    @State private var compoundInterestValue: String = ""
-    
+    @State private var timeValue: String = ""              // Time value (days?)    
     
     
     // Alerts for fields
@@ -89,7 +71,7 @@ struct CompoundView: View {
                     Spacer()
                     Divider()
                         .padding(20)
-                    
+                    /*
                     GroupBox ("Compound Interest") {
                         Chart {
                             ForEach(currentInterest) {
@@ -108,6 +90,20 @@ struct CompoundView: View {
                     Divider()
                         .padding(20)
                     Spacer()
+                     */
+                    Button(action: clearFields, label: {
+                        Text("Clear Fields".uppercased())
+                            .foregroundColor(.white)
+                            .font(.headline)
+                            .frame(height: 55)
+                            .frame(maxWidth: 200)
+                            .background(Color.gray)
+                            .cornerRadius(10, antialiased: true)
+                            .shadow(radius: 10)
+                    }) // END BUTTON
+                    .padding(.vertical, 20)
+                    
+                    
                     Button(action: calculatePressed, label: {
                         Text("Calculate".uppercased())
                             .foregroundColor(.white)
@@ -141,6 +137,35 @@ struct CompoundView: View {
          
          --> might need to perform async background task
          */
+        
+        struct CompoundCount: Identifiable {
+            let id = UUID()
+            let time: Int
+            let interest: Double
+        }
+        
+
+        let intPrinciple = Double(principleValue) ?? 0.0
+        let intInterest = Double(interestValue) ?? 0.0
+        let intTime = Int(timeValue) ?? 0
+    
+        
+        let time = 1...intTime
+        for i in time {
+            // print(i) // debug only
+            var amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
+            
+            var currentInterest: [CompoundCount] = [
+                CompoundCount(time: i, interest: Double(amount))
+            ]
+        }
+        //tvar amount = intPrinciple * pow((1 + Rate/100), TimeInterval)
+    }
+    
+    func clearFields() {
+        principleValue = ""
+        interestValue = ""
+        timeValue = ""
     }
     
     // error checking
