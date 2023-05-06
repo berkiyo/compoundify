@@ -34,11 +34,11 @@ struct CompoundView: View {
     
     
     let currentInterest: [CompoundCount] = [
-        CompoundCount(time: 1, interest: 1000),
+        CompoundCount(time: 0, interest: 100),
         CompoundCount(time: 2, interest: 3000),
         CompoundCount(time: 3, interest: 2000),
         CompoundCount(time: 4, interest: 4500),
-        CompoundCount(time: 5, interest: 5000)
+        CompoundCount(time: 5, interest: 9000)
     ]
 
     
@@ -54,20 +54,14 @@ struct CompoundView: View {
     @State var alertTitle: String = ""
     @State var showAlert: Bool = false
     
-    // Brief UI Design
-    // Enter principle amount
-    // Enter interest rate
-    // Enter time period (how many days?)
-    // Graph below
-    // Calculate button
-    
     /**
      Start Body
      */
+    // START BODY
     var body: some View {
-        ZStack {
-            ScrollView {
-                VStack {
+        ZStack { // START ZSTACK
+            ScrollView { // START SCROLLVIEW
+                VStack { // START VSTACK
                     
                     // Principle Text Box
                     TextField("Enter principle (e.g. 10000)", text: $principleValue)
@@ -134,11 +128,19 @@ struct CompoundView: View {
         } // END ZSTACK
         .navigationTitle("Compoundify")
         
-    }
+    } // END BODY
     
     func calculatePressed() {
-        // do something
-        print("Calculate Pressed!")
+        /** logic:
+         Convert obtained string values to numbers (max time period is 1000)
+            Then run the first script:
+              var Amount = Principal * pow((1 + Rate/100), TimeInterval)
+         Save amount to array[x] = Y axis
+         Save timeinteral to no. of days
+         Output to graph
+         
+         --> might need to perform async background task
+         */
     }
     
     // error checking
