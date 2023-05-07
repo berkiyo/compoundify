@@ -36,6 +36,15 @@ struct CompoundView: View {
     @State var alertTitle: String = ""
     @State var showAlert: Bool = false
     
+    struct CompoundCount: Identifiable {
+        let id = UUID()
+        let time: Int
+        let interest: Double
+    }
+    
+    @State private var currentInterest: [CompoundCount] = [
+        CompoundCount(time: 0, interest: 0)
+    ]
     /**
      Start Body
      */
@@ -71,7 +80,7 @@ struct CompoundView: View {
                     Spacer()
                     Divider()
                         .padding(20)
-                    /*
+                    
                     GroupBox ("Compound Interest") {
                         Chart {
                             ForEach(currentInterest) {
@@ -90,7 +99,7 @@ struct CompoundView: View {
                     Divider()
                         .padding(20)
                     Spacer()
-                     */
+                 
                     Button(action: clearFields, label: {
                         Text("Clear Fields".uppercased())
                             .foregroundColor(.white)
@@ -104,6 +113,10 @@ struct CompoundView: View {
                     .padding(.vertical, 20)
                     
                     
+                    
+                    
+                    
+                    // Run calculations
                     Button(action: calculatePressed, label: {
                         Text("Calculate".uppercased())
                             .foregroundColor(.white)
@@ -137,31 +150,29 @@ struct CompoundView: View {
          
          --> might need to perform async background task
          */
-        
-        struct CompoundCount: Identifiable {
-            let id = UUID()
-            let time: Int
-            let interest: Double
-        }
-        
-
         let intPrinciple = Double(principleValue) ?? 0.0
         let intInterest = Double(interestValue) ?? 0.0
         let intTime = Int(timeValue) ?? 0
-    
+        /**
+         DEBUG
+         **/
+        print("Time = " + timeValue)
+        print("Interest = " + interestValue)
+        print("Principle = " + principleValue)
         
-        let time = 1...intTime
-        for i in time {
+        //
+        var amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
+        for i in 1...40 {
             // print(i) // debug only
-            var amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
-            
-            var currentInterest: [CompoundCount] = [
-                CompoundCount(time: i, interest: Double(amount))
-            ]
+            amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
+            currentInterest.insert(CompoundCount(time: i, interest: Double(amount)), at: i)
+            // insert array
         }
-        //tvar amount = intPrinciple * pow((1 + Rate/100), TimeInterval)
     }
     
+    /**
+     Clear the fields
+     */
     func clearFields() {
         principleValue = ""
         interestValue = ""
