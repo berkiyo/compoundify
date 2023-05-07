@@ -9,3 +9,8 @@
 - No ads
 - Fully free
 - Open source
+- Customisable graph
+
+## development
+
+This app is currently under rapid development.

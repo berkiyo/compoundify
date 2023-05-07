@@ -3,26 +3,6 @@ import Foundation
 import GLKit
 import Charts
 
-/*
-print("Please enter the principal amount-")
-var Principal = Float(readLine()!)!
-print("Please enter the rate of interest-")
-var Rate = Float(readLine()!)!
-print("Please enter the time period-")
-var TimeInterval = Float(readLine()!)!
-
-var Amount = Principal * pow((1 + Rate/100), TimeInterval)
-
-var CI = Amount - Principal
-
-print("Entered Principal is-", Principal)
-print("Entered Interest rate is-", Rate)
-print("Entered Time interval is-", TimeInterval)
-print("--------------")
-print("Amount is-", Amount)
-print("Compound interest is-", CI)
-*/
-
 // CompoundView
 struct CompoundView: View {
     
@@ -81,7 +61,7 @@ struct CompoundView: View {
                     Divider()
                         .padding(20)
                     
-                    GroupBox ("Compound Interest") {
+                    GroupBox ("Amount") {
                         Chart {
                             ForEach(currentInterest) {
                                 LineMark(
@@ -95,10 +75,8 @@ struct CompoundView: View {
                         }
                     }
                     
-                    
                     Divider()
                         .padding(20)
-                    Spacer()
                  
                     Button(action: clearFields, label: {
                         Text("Clear Fields".uppercased())
@@ -140,6 +118,7 @@ struct CompoundView: View {
     } // END BODY
     
     func calculatePressed() {
+        currentInterest.removeAll(keepingCapacity: false)
         /** logic:
          Convert obtained string values to numbers (max time period is 1000)
             Then run the first script:
@@ -162,9 +141,9 @@ struct CompoundView: View {
         
         //
         var amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
-        for i in 1...40 {
+        for i in 0...intTime {
             // print(i) // debug only
-            amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
+            amount = intPrinciple * pow((1 + intInterest/100), Double(i))
             currentInterest.insert(CompoundCount(time: i, interest: Double(amount)), at: i)
             // insert array
         }
