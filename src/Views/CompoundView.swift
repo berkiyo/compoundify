@@ -6,11 +6,18 @@ import Charts
 // CompoundView
 struct CompoundView: View {
     
-    // Define Variables Here
+    // VARIABLES
     @State private var principleValue: String = ""    // The amount you want to borrow
     @State private var interestValue: String = ""     // The interest rate
     @State private var timeValue: String = ""              // Time value (days?)    
+
+    // GRAPH RESULTS
+    @State private var principleValueGraph: String = ""    // The amount you want to borrow
+    @State private var interestValueGraph: String = ""     // The interest rate
+    @State private var timeValueGraph: String = ""              // Time value (days?)
     
+    @State private var finalAmountGraph: String = "No Amount"
+    @State private var finalInterestGraph: String = "No Interest"
     
     // Alerts for fields
     @State var alertTitle: String = ""
@@ -22,6 +29,9 @@ struct CompoundView: View {
         let interest: Double
     }
     
+    @State private var currentAmount: [CompoundCount] = [
+        CompoundCount(time: 0, interest: 0)
+    ]
     @State private var currentInterest: [CompoundCount] = [
         CompoundCount(time: 0, interest: 0)
     ]
@@ -58,10 +68,56 @@ struct CompoundView: View {
                         .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                         .padding(.vertical, 5)
                     Spacer()
+                    
+                    HStack {
+                        Button(action: clearFields, label: {
+                            Text("Clear".uppercased())
+                                .foregroundColor(.white)
+                                .font(.headline)
+                                .frame(height: 55)
+                                .frame(maxWidth: 200)
+                                .background(Color.gray)
+                                .cornerRadius(10, antialiased: true)
+                                .shadow(radius: 10)
+                        }) // END BUTTON
+                        .padding(.vertical, 20)
+                        
+                        
+                        // Run calculations
+                        Button(action: calculatePressed, label: {
+                            Text("Calculate".uppercased())
+                                .foregroundColor(.white)
+                                .font(.headline)
+                                .frame(height: 55)
+                                .frame(maxWidth: 200)
+                                .background(Color.green)
+                                .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                                .shadow(radius: 10)
+                        }) // END BUTTON
+                    }
+                    
                     Divider()
                         .padding(20)
                     
-                    GroupBox ("Amount") {
+                    GroupBox ("Compound Amount") {
+                        Chart {
+                            ForEach(currentAmount) {
+                                LineMark(
+                                    x: .value("Time", $0.time),
+                                    y: .value("Interest", $0.interest)
+                                )
+                            }
+                        } // END CHART
+                        .onTapGesture {
+                            print("Chart tapped! Do something.") // TODO
+                        }
+                        .frame(height: 200, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        .chartXAxisLabel("Time")
+                        .chartYAxisLabel("Amount")
+                    }
+                    .padding(.vertical, 20)
+                    
+                    GroupBox ("Compound Interest") {
                         Chart {
                             ForEach(currentInterest) {
                                 LineMark(
@@ -73,13 +129,14 @@ struct CompoundView: View {
                         .onTapGesture {
                             print("Chart tapped! Do something.") // TODO
                         }
+                        .frame(height: 200, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        .chartXAxisLabel("Time")
+                        .chartYAxisLabel("Amount")
                     }
                     
-                    Divider()
-                        .padding(20)
-                 
-                    Button(action: clearFields, label: {
-                        Text("Clear Fields".uppercased())
+                    // Results Go Here
+                    HStack {
+                        Text(finalInterestGraph)
                             .foregroundColor(.white)
                             .font(.headline)
                             .frame(height: 55)
@@ -87,37 +144,28 @@ struct CompoundView: View {
                             .background(Color.gray)
                             .cornerRadius(10, antialiased: true)
                             .shadow(radius: 10)
-                    }) // END BUTTON
-                    .padding(.vertical, 20)
-                    
-                    
-                    
-                    
-                    
-                    // Run calculations
-                    Button(action: calculatePressed, label: {
-                        Text("Calculate".uppercased())
+                        Text(finalAmountGraph)
                             .foregroundColor(.white)
                             .font(.headline)
                             .frame(height: 55)
                             .frame(maxWidth: 200)
-                            .background(Color.green)
-                            .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                            .background(Color.gray)
+                            .cornerRadius(10, antialiased: true)
                             .shadow(radius: 10)
-                    }) // END BUTTON
+                    }
+                    .padding(.top, 20)
+                    .padding(.bottom, 20)
                 } // END VSTACK   
                 .padding(.vertical, 10)
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 20) 
             } // END SCROLLVIEW
-            
-            
-            
         } // END ZSTACK
         .navigationTitle("Compoundify")
         
     } // END BODY
     
     func calculatePressed() {
+        currentAmount.removeAll(keepingCapacity: false)
         currentInterest.removeAll(keepingCapacity: false)
         /** logic:
          Convert obtained string values to numbers (max time period is 1000)
@@ -132,30 +180,38 @@ struct CompoundView: View {
         let intPrinciple = Double(principleValue) ?? 0.0
         let intInterest = Double(interestValue) ?? 0.0
         let intTime = Int(timeValue) ?? 0
-        /**
-         DEBUG
-         **/
-        print("Time = " + timeValue)
-        print("Interest = " + interestValue)
-        print("Principle = " + principleValue)
+        
+        // Results to store and show under graph
+        timeValueGraph = "Time = " + timeValue
+        interestValueGraph = "Interest = " + interestValue
+        principleValueGraph = "Principle = " + principleValue
+
         
         //
         var amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
         for i in 0...intTime {
             // print(i) // debug only
             amount = intPrinciple * pow((1 + intInterest/100), Double(i))
-            currentInterest.insert(CompoundCount(time: i, interest: Double(amount)), at: i)
+            currentAmount.insert(CompoundCount(time: i, interest: Double(amount)), at: i)
+            currentInterest.insert(CompoundCount(time: i, interest: Double(amount - intPrinciple)), at: i)
+            finalAmountGraph = String(amount)
+            finalInterestGraph = String(amount - intPrinciple)
             // insert array
         }
+        
     }
     
     /**
      Clear the fields
      */
     func clearFields() {
+        currentAmount.removeAll(keepingCapacity: false)
+        currentInterest.removeAll(keepingCapacity: false)
         principleValue = ""
         interestValue = ""
         timeValue = ""
+        finalInterestGraph = "No Interest"
+        finalAmountGraph = "No Amount"
     }
     
     // error checking
