@@ -35,6 +35,9 @@ struct CompoundView: View {
     @State private var currentInterest: [CompoundCount] = [
         CompoundCount(time: 0, interest: 0)
     ]
+    
+    // for hover
+    @State private var selectedMonth: String?
     /**
      Start Body
      */
@@ -71,7 +74,7 @@ struct CompoundView: View {
                     
                     HStack {
                         Button(action: clearFields, label: {
-                            Text("Clear".uppercased())
+                            Text("CLEAR")
                                 .foregroundColor(.white)
                                 .font(.headline)
                                 .frame(height: 55)
@@ -85,7 +88,7 @@ struct CompoundView: View {
                         
                         // Run calculations
                         Button(action: calculatePressed, label: {
-                            Text("Calculate".uppercased())
+                            Text("CALCULATE")
                                 .foregroundColor(.white)
                                 .font(.headline)
                                 .frame(height: 55)
@@ -108,9 +111,6 @@ struct CompoundView: View {
                                 )
                             }
                         } // END CHART
-                        .onTapGesture {
-                            print("Chart tapped! Do something.") // TODO
-                        }
                         .frame(height: 200, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                         .chartXAxisLabel("Time")
                         .chartYAxisLabel("Amount")
@@ -126,9 +126,6 @@ struct CompoundView: View {
                                 )
                             }
                         } // END CHART
-                        .onTapGesture {
-                            print("Chart tapped! Do something.") // TODO
-                        }
                         .frame(height: 200, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                         .chartXAxisLabel("Time")
                         .chartYAxisLabel("Amount")
@@ -194,8 +191,8 @@ struct CompoundView: View {
             amount = intPrinciple * pow((1 + intInterest/100), Double(i))
             currentAmount.insert(CompoundCount(time: i, interest: Double(amount)), at: i)
             currentInterest.insert(CompoundCount(time: i, interest: Double(amount - intPrinciple)), at: i)
-            finalAmountGraph = String(amount)
-            finalInterestGraph = String(amount - intPrinciple)
+            finalAmountGraph = "Amount = " + String(format: "%.2f", amount)
+            finalInterestGraph = "Interest = " + String(format: "%.2f", (amount - intPrinciple))
             // insert array
         }
         
