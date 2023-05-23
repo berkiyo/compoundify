@@ -3,6 +3,13 @@ import Foundation
 import GLKit
 import Charts
 
+extension String {
+    var isNumber: Bool {
+        let digitsCharacters = CharacterSet(charactersIn: ".0123456789")        
+        return CharacterSet(charactersIn: self).isSubset(of: digitsCharacters)
+    }
+}
+
 // CompoundView
 struct CompoundView: View {
     
@@ -54,6 +61,7 @@ struct CompoundView: View {
                         .background(Color(UIColor.secondarySystemBackground))
                         .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                         .padding(.vertical, 5)
+                        .keyboardType(.numberPad)
                     
                     // Interest Text Box
                     TextField("Enter interest (e.g. 7.99)", text: $interestValue)
@@ -62,6 +70,7 @@ struct CompoundView: View {
                         .background(Color(UIColor.secondarySystemBackground))
                         .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                         .padding(.vertical, 5)
+                        .keyboardType(.numberPad)
                     
                     // Time Text Box
                     TextField("Enter time period (e.g. 7)", text: $timeValue)
@@ -70,6 +79,7 @@ struct CompoundView: View {
                         .background(Color(UIColor.secondarySystemBackground))
                         .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                         .padding(.vertical, 5)
+                        .keyboardType(.numberPad)
                     Spacer()
                     
                     HStack {
@@ -96,9 +106,9 @@ struct CompoundView: View {
                                 .background(Color.green)
                                 .cornerRadius(10, antialiased: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                                 .shadow(radius: 10)
-                        }) // END BUTTON
+                        })
+                        // END BUTTON
                     }
-                    
                     Divider()
                         .padding(20)
                     
@@ -138,17 +148,19 @@ struct CompoundView: View {
                             .font(.headline)
                             .frame(height: 55)
                             .frame(maxWidth: 200)
-                            .background(Color.gray)
+                            .background(Color.green)
                             .cornerRadius(10, antialiased: true)
                             .shadow(radius: 10)
+                            .multilineTextAlignment(.center)
                         Text(finalAmountGraph)
                             .foregroundColor(.white)
                             .font(.headline)
                             .frame(height: 55)
                             .frame(maxWidth: 200)
-                            .background(Color.gray)
+                            .background(Color.green)
                             .cornerRadius(10, antialiased: true)
                             .shadow(radius: 10)
+                            .multilineTextAlignment(.center)
                     }
                     .padding(.top, 20)
                     .padding(.bottom, 20)
@@ -162,40 +174,45 @@ struct CompoundView: View {
     } // END BODY
     
     func calculatePressed() {
-        currentAmount.removeAll(keepingCapacity: false)
-        currentInterest.removeAll(keepingCapacity: false)
-        /** logic:
-         Convert obtained string values to numbers (max time period is 1000)
-            Then run the first script:
-              var Amount = Principal * pow((1 + Rate/100), TimeInterval)
-         Save amount to array[x] = Y axis
-         Save timeinteral to no. of days
-         Output to graph
-         
-         --> might need to perform async background task
-         */
-        let intPrinciple = Double(principleValue) ?? 0.0
-        let intInterest = Double(interestValue) ?? 0.0
-        let intTime = Int(timeValue) ?? 0
-        
-        // Results to store and show under graph
-        timeValueGraph = "Time = " + timeValue
-        interestValueGraph = "Interest = " + interestValue
-        principleValueGraph = "Principle = " + principleValue
-
-        
-        //
-        var amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
-        for i in 0...intTime {
-            // print(i) // debug only
-            amount = intPrinciple * pow((1 + intInterest/100), Double(i))
-            currentAmount.insert(CompoundCount(time: i, interest: Double(amount)), at: i)
-            currentInterest.insert(CompoundCount(time: i, interest: Double(amount - intPrinciple)), at: i)
-            finalAmountGraph = "Amount = " + String(format: "%.2f", amount)
-            finalInterestGraph = "Interest = " + String(format: "%.2f", (amount - intPrinciple))
-            // insert array
+        if textIsAppropriate() == true {
+            currentAmount.removeAll(keepingCapacity: false)
+            currentInterest.removeAll(keepingCapacity: false)
+            /** logic:
+             Convert obtained string values to numbers (max time period is 1000)
+             Then run the first script:
+             var Amount = Principal * pow((1 + Rate/100), TimeInterval)
+             Save amount to array[x] = Y axis
+             Save timeinteral to no. of days
+             Output to graph
+             
+             --> might need to perform async background task
+             */
+            let intPrinciple = Double(principleValue) ?? 0.0
+            let intInterest = Double(interestValue) ?? 0.0
+            let intTime = Int(timeValue) ?? 0
+            
+            // Results to store and show under graph
+            timeValueGraph = "Time = " + timeValue
+            interestValueGraph = "Interest = " + interestValue
+            principleValueGraph = "Principle = " + principleValue
+            
+            
+            //
+            var amount = intPrinciple * pow((1 + intInterest/100), Double(intTime))
+            for i in 0...intTime {
+                // print(i) // debug only
+                amount = intPrinciple * pow((1 + intInterest/100), Double(i))
+                currentAmount.insert(CompoundCount(time: i, interest: Double(amount)), at: i)
+                currentInterest.insert(CompoundCount(time: i, interest: Double(amount - intPrinciple)), at: i)
+                finalAmountGraph = "Final Amount: " + String(format: "%.2f", amount)
+                finalInterestGraph = "Final Interest: " + String(format: "%.2f", (amount - intPrinciple))
+                // insert array
+            }
+            
         }
-        
+        if textIsAppropriate() == false {
+            showAlert.toggle()
+        }
     }
     
     /**
@@ -217,22 +234,14 @@ struct CompoundView: View {
      Check and see if the number of characters is appropriate
      */
     func textIsAppropriate() -> Bool {
-        if principleValue.count == 0 {
-            alertTitle = "Enter a princple value first"
-            showAlert.toggle()
-            return false
+        if principleValue.isNumber && interestValue.isNumber && timeValue.isNumber {
+            // debug mode
+            print("Number is good")
+            return true
         }
-        if interestValue.count == 0 {
-            alertTitle = "Enter an interest value first"
-            showAlert.toggle()
-            return false
-        }
-        if timeValue.count == 0 {
-            alertTitle = "Enter a time value first"
-            showAlert.toggle()
-            return false
-        }
-
-        return true
+        print("Number is no good")
+        alertTitle = "Enter numbers only"
+        showAlert.toggle()
+        return false
     }
 }
