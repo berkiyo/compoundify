@@ -80,6 +80,8 @@ export default function App() {
 		// console.log(enteredGoalText) // for debugging
 	};
 
+
+	
 	return (
 		<ScrollView>
 			<SafeAreaView style={styles.appContainer}>
