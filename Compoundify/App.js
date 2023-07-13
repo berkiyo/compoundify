@@ -1,21 +1,15 @@
 /**
- * Importing
+ * Importing from libraries
  */
 
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, Dimensions, ScrollView, SafeAreaView} from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Dimensions, FlatList} from 'react-native';
 import { useState } from 'react'
-import {
-	LineChart,
-	BarChart,
-	PieChart,
-	ProgressChart,
-	ContributionGraph,
-	StackedBarChart
-  } from "react-native-chart-kit";
 
 
-
+/**
+ * Importing from components
+ */
+import GoalItem from './components/GoalItem';
 
 
 
@@ -34,6 +28,8 @@ export default function App() {
 	const width_proportion = '80%';
 	const height_proportion = '40%';
 
+	
+	// Dummy data for testing purposes
 	const data = {
 		labels: ["January", "February", "March", "April", "May", "June"],
 		datasets: [
@@ -76,43 +72,40 @@ export default function App() {
 
 	// add button hander
 	function addGoalHandler() {
-		setCourseGoals(currentCourseGoals => [...courseGoals, enteredGoalText]); // recommended way to update your state
+		setCourseGoals(currentCourseGoals => 
+			[...courseGoals, 
+				{text: enteredGoalText, id: Math.random().toString()}]); // recommended way to update your state
 		// console.log(enteredGoalText) // for debugging
 	};
 
 
-	
 	return (
-		<ScrollView>
-			<SafeAreaView style={styles.appContainer}>
-				
-				<View style={styles.inputContainer}>
-					<TextInput 
-						styles={styles.customInput}
-						placeholder='Your course goal!!'
-						onChangeText={goalInputHandler} />
-
-					<AppButton onPress={addGoalHandler} title="Add Goal"></AppButton>
+		<View style={styles.appContainer}>
 			
-				</View>
+			<View style={styles.inputContainer}>
 
-				<View style={styles.goalsContainer}>
-					{courseGoals.map((goal) => <Text key={goal} style={styles.individualGoalContainer}>{goal}</Text>)}
-				</View>
+				<TextInput 
+					styles={styles.customInput}
+					placeholder='Your course goal!!'
+					onChangeText={goalInputHandler} />
 
-				<LineChart
-					data={data}
-					width={300} // you can set this to screenWidth
-					height={220}
-					chartConfig={chartConfig}
-					bezier
-					style={{
-					marginVertical: 8,
-					borderRadius: 16
+				<AppButton onPress={addGoalHandler} title="Add Goal"></AppButton>
+		
+			</View>
+
+			<View style={styles.goalsContainer}> 
+				<FlatList 
+					data={courseGoals} 
+					renderItem={(itemData) => {
+						return <GoalItem text={itemData.item.text}/>;
+					}}
+					keyExtractor={(item, index) => {
+						return item.id;
 					}}
 				/>
-			</SafeAreaView>
-		</ScrollView>
+			</View>
+
+		</View>
 	);
 }
 
@@ -136,6 +129,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		paddingHorizontal: 10,
+		padding: 15,
 		alignItems: 'center',
 		borderRadius: 20,
 		borderBottomColor: '#cccccc',
@@ -157,14 +151,6 @@ const styles = StyleSheet.create({
 		padding: 20,
 		backgroundColor: "#eeeeee",
 		borderRadius: 8,
-	},
-
-	individualGoalContainer: {
-		margin: 8,
-		padding: 8,
-		borderRadius: 8,
-		backgroundColor: '#5d9afc',
-		color: 'white',
 	},
 
 	/**
